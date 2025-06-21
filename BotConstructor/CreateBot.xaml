@@ -5,8 +5,67 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BotConstructor"
         mc:Ignorable="d"
-        Title="CreateBot" Height="450" Width="800">
-    <Grid>
-        
+        Title="CreateBot" Height="450" Width="400" WindowStartupLocation="CenterScreen">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Назад + Имя -->
+            <RowDefinition Height="*"/>
+            <!-- Функции -->
+        </Grid.RowDefinitions>
+
+        <!-- Верхняя строка -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+            <Button Content="←"
+                    Width="30" Height="30"
+                    Name="BackButton"
+                    Click="BackButton_Click"/>
+            <TextBox Name="BotNameTextBox"
+                     Width="300"
+                     Height="30"
+                     Margin="10,0,0,0"
+                     FontSize="14"
+                     Text="Введите имя бота"
+                     Foreground="Gray"
+                     GotFocus="BotNameTextBox_GotFocus"
+                     LostFocus="BotNameTextBox_LostFocus"/>
+        </StackPanel>
+
+        <!-- Список функций -->
+        <StackPanel Grid.Row="1" Margin="0,10,0,0">
+            <TextBlock Text="Выберите функционал бота:" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+
+            <ListBox Name="FunctionList" BorderThickness="0" SelectionMode="Single">
+                <!-- FAQ -->
+                <ListBoxItem MouseLeftButtonUp="FunctionItem_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Name="FAQCheckBox" Margin="0,0,10,0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+                        <TextBlock Name="FAQText" Text="FAQ (часто задаваемые вопросы)"
+                       FontSize="14"
+                       Foreground="Gray"/>
+                    </StackPanel>
+                </ListBoxItem>
+
+                <!-- Форма -->
+                <ListBoxItem MouseLeftButtonUp="FunctionItem_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Name="FormCheckBox" Margin="0,0,10,0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+                        <TextBlock Name="FormText" Text="Форма для заказов / заявок"
+                       FontSize="14"
+                       Foreground="Gray"/>
+                    </StackPanel>
+                </ListBoxItem>
+
+                <!-- База клиентов -->
+                <ListBoxItem MouseLeftButtonUp="FunctionItem_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Name="ClientsCheckBox" Margin="0,0,10,0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+                        <TextBlock Name="ClientsText" Text="База клиентов"
+                       FontSize="14"
+                       Foreground="Gray"/>
+                    </StackPanel>
+                </ListBoxItem>
+            </ListBox>
+        </StackPanel>
     </Grid>
 </Window>
