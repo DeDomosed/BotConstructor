@@ -11,8 +11,6 @@ namespace BotConstructor
         {
             InitializeComponent();
 
-            AddBotButton.Click += AddBotButton_Click;
-
             // Тестовый список ботов
             var bots = new List<Bot>
             {

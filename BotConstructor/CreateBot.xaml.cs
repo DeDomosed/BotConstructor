@@ -86,16 +86,12 @@ namespace BotConstructor
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            if (sender == FAQCheckBox) FAQText.Foreground = Brushes.Black;
-            if (sender == FormCheckBox) FormText.Foreground = Brushes.Black;
-            if (sender == ClientsCheckBox) ClientsText.Foreground = Brushes.Black;
+           
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            if (sender == FAQCheckBox) FAQText.Foreground = Brushes.Gray;
-            if (sender == FormCheckBox) FormText.Foreground = Brushes.Gray;
-            if (sender == ClientsCheckBox) ClientsText.Foreground = Brushes.Gray;
+            
         }
     }
 }

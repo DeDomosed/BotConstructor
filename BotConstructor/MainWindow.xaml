@@ -4,32 +4,42 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BotConstructor"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="400" WindowStartupLocation="CenterScreen">
+        Title="Боты" Height="450" Width="400" WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource MaterialDesignPaper}">
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left" Margin="0,0,0,20">
-            <Button Content="➕ Добавить бота"
-                    Width="360" Height="40" 
-                    x:Name="AddBotButton"
-                    />
+        <!-- Добавить бота -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left" Margin="0,0,0,10">
+            <Button x:Name="AddBotButton"
+                    Width="343"
+                    Height="48"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="False"
+                    Click="AddBotButton_Click">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" Margin="0,0,8,0" Foreground="White"/>
+                    <TextBlock Text="Добавить бота" FontSize="16" Foreground="White"/>
+                </StackPanel>
+            </Button>
         </StackPanel>
 
+        <!-- Список ботов -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl Name="BotList">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10" Padding="10" CornerRadius="6">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Name}" FontSize="18" Width="200"/>
-                                <Button Content="✏" Margin="10,0,0,0" Width="100"/>
-                            </StackPanel>
-                        </Border>
+                        <materialDesign:Card Margin="0,0,0,10" Padding="12">
+                            <DockPanel VerticalAlignment="Center">
+                                <Button DockPanel.Dock="Right" Margin="8,0,0,0" Content="✏"/>
+                                <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Medium" VerticalAlignment="Center"/>
+                            </DockPanel>
+                        </materialDesign:Card>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
