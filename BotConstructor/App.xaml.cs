@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace BotConstructor
 {
@@ -9,6 +10,7 @@ namespace BotConstructor
     /// </summary>
     public partial class App : Application
     {
+        public static Frame CurrentFrame { get; set; }
     }
 
 }

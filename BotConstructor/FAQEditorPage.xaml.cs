@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,32 +11,25 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
-using System.Text.Json;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
 namespace BotConstructor
 {
     /// <summary>
-    /// Логика взаимодействия для FAQEditor.xaml
+    /// Логика взаимодействия для FAQEditorPage.xaml
     /// </summary>
-    public partial class FAQEditor : Window
+    public partial class FAQEditorPage : Page
     {
 
         private int questionCounter = 1;
 
-        public FAQEditor()
+        public FAQEditorPage()
         {
             InitializeComponent();
-        }
-
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            var createBotWindow = new CreateBot();
-            createBotWindow.Show();
-            this.Close();
         }
 
         private void AddQuestion_Click(object sender, RoutedEventArgs e)
@@ -144,7 +138,7 @@ namespace BotConstructor
                 AcceptsReturn = true,
                 VerticalContentAlignment = VerticalAlignment.Top
             };
-            Panel.SetZIndex(answerBox, 0); 
+            Panel.SetZIndex(answerBox, 0);
 
             answerBox.TextChanged += (s, e) =>
             {
@@ -154,7 +148,7 @@ namespace BotConstructor
             };
 
             answerGrid.Children.Add(answerBox);
-            answerGrid.Children.Add(answerPlaceholder); 
+            answerGrid.Children.Add(answerPlaceholder);
 
             Grid.SetRow(answerGrid, 1);
 
@@ -239,11 +233,11 @@ namespace BotConstructor
             File.WriteAllText(filePath, json);
 
             MessageBox.Show("FAQ успешно сохранён.", "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            var createBotWindow = new CreateBot();
-            createBotWindow.Show();
-            this.Close();
         }
 
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.CurrentFrame.GoBack();
+        }
     }
 }

@@ -11,26 +11,18 @@ namespace BotConstructor
         {
             InitializeComponent();
 
-            // Тестовый список ботов
-            var bots = new List<Bot>
-            {
-                new Bot { Name = "Бот заказов" },
-                new Bot { Name = "FAQ-бот" }
-            };
-
-            BotList.ItemsSource = bots;
+            App.CurrentFrame = MainFrame;
         }
 
-        private void AddBotButton_Click(object sender, RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            var createWindow = new CreateBot();
-            createWindow.Show();
-            this.Close();
+            if (App.CurrentFrame.CanGoBack)
+                App.CurrentFrame.GoBack();
         }
-    }
 
-    public class Bot
-    {
-        public string Name { get; set; }
+        private void MainFrame_ContentRendered(object sender, EventArgs e)
+        {
+            //BackButton.Visibility = App.CurrentFrame.CanGoBack ? Visibility.Visible : Visibility.Hidden;
+        }
     }
 }
