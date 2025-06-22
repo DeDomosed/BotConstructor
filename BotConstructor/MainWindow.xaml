@@ -13,11 +13,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Добавить бота -->
         <StackPanel Grid.Row="0">
         </StackPanel>
 
-        <!-- Список ботов -->
         <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Source="/StartPage.xaml" Grid.Row="1" ContentRendered="MainFrame_ContentRendered"/>
     </Grid>
 </Window>

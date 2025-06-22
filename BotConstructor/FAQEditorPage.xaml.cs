@@ -184,7 +184,6 @@ namespace BotConstructor
                         string questionText = questionBox.Text.Trim();
                         string answerText = answerBox.Text.Trim();
 
-                        // Пропускаем placeholder'ы
                         if (questionText != "Вопрос" && answerText != "Ответ" &&
                             !string.IsNullOrEmpty(questionText) && !string.IsNullOrEmpty(answerText))
                         {

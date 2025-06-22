@@ -15,6 +15,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
@@ -108,6 +109,26 @@
              materialDesign:HintAssist.Hint="Admin Chat ID"
              Margin="0,0,0,10"
              FontSize="14"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4">
+            <Grid>
+                <TextBox x:Name="BotPathTextBox"
+                     VerticalContentAlignment="Center"
+                     FontSize="14"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     materialDesign:HintAssist.Hint="Путь для сохранения бота"
+                     IsReadOnly="True"/>
+
+                <Button x:Name="SelectPathButton"
+                    Content="📁"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Margin="0,0,5,0"
+                    Click="SelectPathButton_Click"
+                    Background="Transparent"
+                    BorderBrush="{x:Null}"/>
+            </Grid>
         </StackPanel>
     </Grid>
 </Page>

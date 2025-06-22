@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -84,12 +85,12 @@ namespace BotConstructor
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Открыть редактор формы (в разработке)");
+            FormCheckBox.IsChecked = true;
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Открыть редактор базы клиентов (в разработке)");
+            ClientsCheckBox.IsChecked = true;
         }
 
         private void ToggleTokenVisibilityButton_Click(object sender, RoutedEventArgs e)
@@ -115,31 +116,32 @@ namespace BotConstructor
             try
             {
                 var botName = BotNameTextBox.Text.Trim();
-                var welcomeMessage = WelcomeMessageTextBox.Text.Trim();
                 var token = _isTokenVisible ? TokenTextBox.Text.Trim() : TokenPasswordBox.Password.Trim();
+                var welcomeMessage = WelcomeMessageTextBox.Text.Trim();
+                var adminChatId = long.TryParse(AdminChatIdTextBox.Text.Trim(), out var id) ? id : 0;
+                var botPath = BotPathTextBox.Text.Trim();
 
-                // Проверка на placeholder'ы
-                if (botName == BotNamePlaceholder || string.IsNullOrWhiteSpace(botName))
+                if (string.IsNullOrWhiteSpace(botName))
                 {
-                    MessageBox.Show("Пожалуйста, введите имя бота.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                if (welcomeMessage == WelcomeMessagePlaceholder || string.IsNullOrWhiteSpace(welcomeMessage))
-                {
-                    MessageBox.Show("Пожалуйста, введите приветственное сообщение.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                if (!long.TryParse(AdminChatIdTextBox.Text.Trim(), out var adminChatId) || adminChatId == 0)
-                {
-                    MessageBox.Show("Пожалуйста, введите корректный Chat ID администратора.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Введите имя бота");
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(token))
                 {
-                    MessageBox.Show("Пожалуйста, введите токен бота.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Введите токен бота");
+                    return;
+                }
+
+                if (adminChatId == 0)
+                {
+                    MessageBox.Show("Введите корректный Chat ID администратора");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(botPath))
+                {
+                    MessageBox.Show("Выберите путь для сохранения бота");
                     return;
                 }
 
@@ -149,27 +151,48 @@ namespace BotConstructor
                     token_env_var = token,
                     admin_chat_id = adminChatId,
                     start_message = welcomeMessage,
-                    faq = FAQCheckBox.IsChecked == true ? faqBlock : null
+                    faq = FAQCheckBox.IsChecked == true ? faqBlock : null,
+                    save_data = ClientsCheckBox.IsChecked == true,
+                    form_notification = FormCheckBox.IsChecked == true,
+                    bot_path = botPath
                 };
 
                 var options = new JsonSerializerOptions
                 {
                     WriteIndented = true,
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All)
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 };
 
+                Directory.CreateDirectory(botPath);
+
+                string fileName = Path.Combine(botPath, $"{botName}_config.json");
                 string json = JsonSerializer.Serialize(config, options);
-                string fileName = $"{config.bot_name}_config.json";
+                File.WriteAllText(fileName, json, Encoding.UTF8);
 
-                File.WriteAllText(fileName, json);
-
-                MessageBox.Show($"Конфигурация бота '{config.bot_name}' успешно сохранена в файл {fileName}!",
-                    "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Бот '{botName}' успешно сохранен по пути:\n{fileName}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Произошла ошибка при сохранении конфигурации: {ex.Message}",
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка сохранения: {ex.Message}");
+            }
+        }
+
+        private void SelectPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Выберите папку для сохранения бота",
+                Filter = "Папки|*.thisisnotafile",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                CheckFileExists = false,
+                CheckPathExists = true,
+                FileName = "selectthisfolder"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string selectedPath = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
+                BotPathTextBox.Text = selectedPath;
             }
         }
     }

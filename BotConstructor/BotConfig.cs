@@ -13,5 +13,8 @@ namespace BotConstructor
         public long admin_chat_id { get; set; }
         public string start_message { get; set; }
         public FAQBlock faq { get; set; }
+        public bool save_data { get; set; } = false; // Для базы клиентов
+        public bool form_notification { get; set; } = false; // Для формы заказов
+        public string bot_path { get; set; } = ""; // Путь к папке бота
     }
 }
