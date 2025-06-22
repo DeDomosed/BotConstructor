@@ -1,27 +1,17 @@
-﻿namespace BotConstructor
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BotConstructor
 {
     public class BotConfig
     {
-        public string BotName { get; set; }
-        public string TokenEnvVar { get; set; }
-        public long AdminChatId { get; set; }
-        public string StartMessage { get; set; }
-
-        public FaqBlock FAQ { get; set; } = new FaqBlock();
-
-        public class FaqBlock
-        {
-            public string IntroMessage { get; set; } = "Выберите интересующий вопрос из списка:";
-            public string NoAnswerQuestion { get; set; } = "Не нашёл ответ на вопрос";
-            public string UserQuestionPrompt { get; set; } = "Пожалуйста, введите свой вопрос.";
-            public string UserQuestionFinal { get; set; } = "Ваш вопрос был направлен администратору. Среднее время ожидания — 15 минут.";
-            public List<FAQItem> Items { get; set; } = new List<FAQItem>();
-        }
-
-        public class FAQItem
-        {
-            public string Question { get; set; }
-            public string Answer { get; set; }
-        }
+        public string bot_name { get; set; }
+        public string token_env_var { get; set; }
+        public long admin_chat_id { get; set; }
+        public string start_message { get; set; }
+        public FAQBlock faq { get; set; }
     }
 }

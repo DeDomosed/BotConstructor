@@ -74,7 +74,8 @@
                 </ListBoxItem>
             </ListBox>
             
-            <Button Content="Сохранить"/>
+            <Button Content="Сохранить"
+                    Click="SaveBotConfig_Click"/>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Margin="0,10,0,0">

@@ -1,30 +1,33 @@
-﻿using System.IO;
-using System.Text.Json;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace BotConstructor
 {
-    /// <summary>
-    /// Логика взаимодействия для FAQEditorPage.xaml
-    /// </summary>
     public partial class FAQEditorPage : Page
     {
-
         private int questionCounter = 1;
+        private FAQBlock faqBlock;
+        private Action<FAQBlock> onSaveCallback;
 
-        public FAQEditorPage()
+        public FAQEditorPage(FAQBlock existingFaq, Action<FAQBlock> onSave)
         {
             InitializeComponent();
+            faqBlock = existingFaq;
+            onSaveCallback = onSave;
+
+            foreach (var item in faqBlock.Items)
+            {
+                AddQuestionBlock(item.Question, item.Answer);
+            }
         }
 
         private void AddQuestion_Click(object sender, RoutedEventArgs e)
         {
-            AddQuestionBlock($"Вопрос {questionCounter++}");
+            AddQuestionBlock();
         }
 
-        private void AddQuestionBlock(string title = null)
+        private void AddQuestionBlock(string question = "", string answer = "")
         {
             var expander = new Expander
             {
@@ -33,10 +36,9 @@ namespace BotConstructor
             };
 
             var headerPanel = new DockPanel();
-
             var headerText = new TextBlock
             {
-                Text = title ?? $"Вопрос {questionCounter++}",
+                Text = $"Вопрос {questionCounter++}",
                 VerticalAlignment = VerticalAlignment.Center,
                 FontWeight = FontWeights.Bold
             };
@@ -64,83 +66,88 @@ namespace BotConstructor
             headerPanel.Children.Add(deleteButton);
             expander.Header = headerPanel;
 
-            var grid = new Grid
-            {
-                Margin = new Thickness(10)
-            };
+            var grid = new Grid { Margin = new Thickness(10) };
             grid.RowDefinitions.Add(new RowDefinition());
             grid.RowDefinitions.Add(new RowDefinition());
 
-            var questionGrid = new Grid
-            {
-                Height = 30,
-                Margin = new Thickness(0, 0, 0, 10)
-            };
-
+            // Поле вопроса
             var questionBox = new TextBox
             {
                 Background = Brushes.Transparent,
                 VerticalContentAlignment = VerticalAlignment.Center
             };
 
-            var questionPlaceholder = new TextBlock
+            if (string.IsNullOrEmpty(question))
             {
-                Text = "Вопрос:",
-                Margin = new Thickness(5, 0, 0, 0),
-                Foreground = Brushes.Gray,
-                VerticalAlignment = VerticalAlignment.Center,
-                IsHitTestVisible = false
+                questionBox.Text = "Вопрос";
+                questionBox.Foreground = Brushes.Gray;
+            }
+            else
+            {
+                questionBox.Text = question;
+                questionBox.Foreground = Brushes.Black;
+            }
+
+            questionBox.GotFocus += (s, e) =>
+            {
+                if (questionBox.Text == "Вопрос")
+                {
+                    questionBox.Text = "";
+                    questionBox.Foreground = Brushes.Black;
+                }
             };
 
-            questionBox.TextChanged += (s, e) =>
+            questionBox.LostFocus += (s, e) =>
             {
-                questionPlaceholder.Visibility = string.IsNullOrEmpty(questionBox.Text)
-                    ? Visibility.Visible
-                    : Visibility.Hidden;
+                if (string.IsNullOrWhiteSpace(questionBox.Text))
+                {
+                    questionBox.Text = "Вопрос";
+                    questionBox.Foreground = Brushes.Gray;
+                }
             };
 
-            questionGrid.Children.Add(questionPlaceholder);
-            questionGrid.Children.Add(questionBox);
-            Grid.SetRow(questionGrid, 0);
+            Grid.SetRow(questionBox, 0);
+            grid.Children.Add(questionBox);
 
-            var answerGrid = new Grid
-            {
-                Height = 40,
-                Margin = new Thickness(0)
-            };
-
-            var answerPlaceholder = new TextBlock
-            {
-                Text = "Ответ:",
-                Margin = new Thickness(5, 5, 0, 0),
-                Foreground = Brushes.Gray,
-                VerticalAlignment = VerticalAlignment.Top,
-                IsHitTestVisible = false
-            };
-            Panel.SetZIndex(answerPlaceholder, 1);
-
+            // Поле ответа
             var answerBox = new TextBox
             {
                 TextWrapping = TextWrapping.Wrap,
                 AcceptsReturn = true,
                 VerticalContentAlignment = VerticalAlignment.Top
             };
-            Panel.SetZIndex(answerBox, 0);
 
-            answerBox.TextChanged += (s, e) =>
+            if (string.IsNullOrEmpty(answer))
             {
-                answerPlaceholder.Visibility = string.IsNullOrWhiteSpace(answerBox.Text)
-                    ? Visibility.Visible
-                    : Visibility.Hidden;
+                answerBox.Text = "Ответ";
+                answerBox.Foreground = Brushes.Gray;
+            }
+            else
+            {
+                answerBox.Text = answer;
+                answerBox.Foreground = Brushes.Black;
+            }
+
+            answerBox.GotFocus += (s, e) =>
+            {
+                if (answerBox.Text == "Ответ")
+                {
+                    answerBox.Text = "";
+                    answerBox.Foreground = Brushes.Black;
+                }
             };
 
-            answerGrid.Children.Add(answerBox);
-            answerGrid.Children.Add(answerPlaceholder);
+            answerBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(answerBox.Text))
+                {
+                    answerBox.Text = "Ответ";
+                    answerBox.Foreground = Brushes.Gray;
+                }
+            };
 
-            Grid.SetRow(answerGrid, 1);
-
-            grid.Children.Add(questionGrid);
-            grid.Children.Add(answerGrid);
+            Grid.SetRow(answerBox, 1);
+            grid.Children.Add(answerBox);
 
             expander.Content = grid;
             QuestionListPanel.Children.Add(expander);
@@ -158,73 +165,53 @@ namespace BotConstructor
                     headerText.Text = $"Вопрос {index++}";
                 }
             }
-
             questionCounter = index;
-        }
-
-        public class FAQItem
-        {
-            public string Question { get; set; }
-            public string Answer { get; set; }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            var faqItems = new List<FAQItem>();
+            var newItems = new List<FAQItem>();
 
             foreach (Expander expander in QuestionListPanel.Children)
             {
-                if (expander.Content is Grid grid)
+                if (expander.Content is Grid grid && grid.Children.Count == 2)
                 {
-                    var questionGrid = grid.Children.OfType<Grid>().FirstOrDefault();
-                    var answerGrid = grid.Children.OfType<Grid>().Skip(1).FirstOrDefault();
+                    var questionBox = grid.Children[0] as TextBox;
+                    var answerBox = grid.Children[1] as TextBox;
 
-                    if (questionGrid != null && answerGrid != null)
+                    if (questionBox != null && answerBox != null)
                     {
-                        var questionBox = questionGrid.Children.OfType<TextBox>().FirstOrDefault();
-                        var answerBox = answerGrid.Children.OfType<TextBox>().FirstOrDefault();
+                        string questionText = questionBox.Text.Trim();
+                        string answerText = answerBox.Text.Trim();
 
-                        if (questionBox != null && answerBox != null)
+                        // Пропускаем placeholder'ы
+                        if (questionText != "Вопрос" && answerText != "Ответ" &&
+                            !string.IsNullOrEmpty(questionText) && !string.IsNullOrEmpty(answerText))
                         {
-                            string questionText = questionBox.Text.Trim();
-                            string answerText = answerBox.Text.Trim();
-
-                            if (!string.IsNullOrEmpty(questionText) && !string.IsNullOrEmpty(answerText))
+                            newItems.Add(new FAQItem
                             {
-                                faqItems.Add(new FAQItem
-                                {
-                                    Question = questionText,
-                                    Answer = answerText
-                                });
-                            }
+                                Question = questionText,
+                                Answer = answerText
+                            });
                         }
                     }
                 }
             }
 
-            if (faqItems.Count == 0)
+            if (newItems.Count == 0)
             {
-                MessageBox.Show("Пожалуйста, добавьте хотя бы один вопрос и ответ.", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Добавьте хотя бы один вопрос и ответ.");
                 return;
             }
 
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All)
-            };
-
-            string json = JsonSerializer.Serialize(faqItems, options);
-
-            string filePath = "faq.json";
-            File.WriteAllText(filePath, json);
-
-            MessageBox.Show("FAQ успешно сохранён.", "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
+            faqBlock.Items = newItems;
+            onSaveCallback?.Invoke(faqBlock);
+            App.CurrentFrame.GoBack();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             App.CurrentFrame.GoBack();
-        }  
+        }
     }
 }
