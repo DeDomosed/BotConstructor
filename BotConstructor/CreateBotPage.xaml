@@ -12,9 +12,9 @@
     <Grid Margin="0,20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
@@ -31,7 +31,18 @@
                  LostFocus="BotNameTextBox_LostFocus"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Margin="0,10,0,0">
+        <StackPanel Grid.Row="1">
+            <TextBox Name="WelcomeMessageTextBox"
+            Text="Введите приветствие бота"
+            Foreground="Gray"
+            TextWrapping="Wrap"
+            AcceptsReturn="True"
+            VerticalScrollBarVisibility="Auto"
+            GotFocus="WelcomeMessageTextBox_GotFocus"
+            LostFocus="WelcomeMessageTextBox_LostFocus"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Margin="0,10,0,0">
             <TextBlock Text="Выберите возможности бота:" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
 
             <ListBox Name="FunctionList" BorderThickness="0" SelectionMode="Single" HorizontalContentAlignment="Stretch">
@@ -62,7 +73,40 @@
                     </DockPanel>
                 </ListBoxItem>
             </ListBox>
+            
             <Button Content="Сохранить"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Margin="0,10,0,0">
+            <Grid>
+                <TextBox x:Name="TokenTextBox"
+                 VerticalContentAlignment="Center"
+                 Visibility="Collapsed"
+                 FontSize="14"
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                 materialDesign:HintAssist.Hint="Token"/>
+
+                <PasswordBox x:Name="TokenPasswordBox"
+                     VerticalContentAlignment="Center"
+                     FontSize="14"
+                     Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" 
+                     materialDesign:HintAssist.Hint="Token"/>
+
+                <Button x:Name="ToggleTokenVisibilityButton"
+                Content="👁"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Margin="0,0,5,0"
+                Click="ToggleTokenVisibilityButton_Click"
+                Background="Transparent"
+                BorderBrush="{x:Null}" />
+            </Grid>
+
+            <TextBox Name="AdminChatIdTextBox"
+             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+             materialDesign:HintAssist.Hint="Admin Chat ID"
+             Margin="0,0,0,10"
+             FontSize="14"/>
         </StackPanel>
     </Grid>
 </Page>

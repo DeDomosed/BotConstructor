@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,10 @@ namespace BotConstructor
     /// </summary>
     public partial class CreateBotPage : Page
     {
+        private BotConfig currentConfig = new BotConfig();
+
+        private bool _isTokenVisible = false;
+
         public CreateBotPage()
         {
             InitializeComponent();
@@ -46,7 +51,24 @@ namespace BotConstructor
                 BotNameTextBox.Foreground = Brushes.Gray;
             }
         }
-
+        //1
+        private void WelcomeMessageTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (WelcomeMessageTextBox.Text == "Введите приветствие бота")
+            {
+                WelcomeMessageTextBox.Text = "";
+                WelcomeMessageTextBox.Foreground = Brushes.Black;
+            }
+        }
+        private void WelcomeMessageTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(WelcomeMessageTextBox.Text))
+            {
+                WelcomeMessageTextBox.Text = "Введите приветствие бота";
+                WelcomeMessageTextBox.Foreground = Brushes.Gray;
+            }
+        }
+        //1
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             App.CurrentFrame.Navigate(new FAQEditorPage());
@@ -60,6 +82,24 @@ namespace BotConstructor
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Открыть редактор базы клиентов (в разработке)");
+        }
+
+        private void ToggleTokenVisibilityButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isTokenVisible)
+            {
+                TokenPasswordBox.Password = TokenTextBox.Text;
+                TokenTextBox.Visibility = Visibility.Collapsed;
+                TokenPasswordBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                TokenTextBox.Text = TokenPasswordBox.Password;
+                TokenPasswordBox.Visibility = Visibility.Collapsed;
+                TokenTextBox.Visibility = Visibility.Visible;
+            }
+
+            _isTokenVisible = !_isTokenVisible;
         }
     }
 }
